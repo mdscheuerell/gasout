@@ -1,0 +1,26 @@
+---
+title: "Estimating time-to-failure for Gas Out"
+author: "K. M. Scheuerell, L. K. Scheuerell, M. D. Scheuerell"
+date: "8/15/2017"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Introduction
+
+__Gas Out__ is a game from Mattel that involves players taking turns playing cards and pressing the "gas cloud" some number of times based on the card played. Play continues until the first person gets "gassed", at which point the game is over. Most of the strategy thus involves some intuition as to the cumulative number of times the gas cloud can be pushed before being gassed.
+
+Here we describe our effort to fit a time-to-failure model based on empirical data recorded during gameplay.
+
+# Methods
+
+The data consist of positive integers indicating the number of times the gas cloud must be pushed to be gassed. Thus, we chose to model the data as arising from two different statistical distributions: a Poisson and a negtive binomial. We then compared the data support for both distributions using Akaike's Information Criterion adjusted for small sample size (AICC).
+
+
+```{r load_data}
+dat <- read.csv("https://raw.githubusercontent.com/mdscheuerell/gasout/master\data\gasout_data.csv")
+```
+
