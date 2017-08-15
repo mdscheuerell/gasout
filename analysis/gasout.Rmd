@@ -11,16 +11,43 @@ knitr::opts_chunk$set(echo = TRUE)
 
 # Introduction
 
-__Gas Out__ is a game from Mattel that involves players taking turns playing cards and pressing the "gas cloud" some number of times based on the card played. Play continues until the first person gets "gassed", at which point the game is over. Most of the strategy thus involves some intuition as to the cumulative number of times the gas cloud can be pushed before being gassed.
-
-Here we describe our effort to fit a time-to-failure model based on empirical data recorded during gameplay.
+__Gas Out__ is a game from Mattel that involves players taking turns playing cards and pressing the "gas cloud" some number of times based on the card played. Play continues until the first person gets "gassed", at which point the game is over. Most of the strategy thus involves some intuition as to the cumulative number of times the gas cloud can be pushed before being gassed. Here we describe our effort to fit a time-to-failure model based on empirical data recorded during gameplay.
 
 # Methods
 
 The data consist of positive integers indicating the number of times the gas cloud must be pushed to be gassed. Thus, we chose to model the data as arising from two different statistical distributions: a Poisson and a negtive binomial. We then compared the data support for both distributions using Akaike's Information Criterion adjusted for small sample size (AICC).
 
 
-```{r load_data}
-dat <- read.csv("https://raw.githubusercontent.com/mdscheuerell/gasout/master\data\gasout_data.csv")
+```{r load_data, fig.height=4, fig.width=6}
+## load data
+dat <- read.csv("https://raw.githubusercontent.com/mdscheuerell/gasout/master/data/gasout_data.csv")
+dat <- dat$count
+## plot histogram
+par(mai=c(0.9,0.9,0.1,0.1), omi=rep(0.1,4))
+rr <- range(dat)
+hist(dat, breaks=seq(rr[1],rr[2]+1)-0.5, col="blue", border="white",
+     main="", xlab="Number of pushes", ylab="Count")
+```
+
+Next we will fit a Poisson ditribution to the data.
+
+```{r fit_poisson}
+## load MASS
+library(MASS)
+## fit Poisson
+f1 <- fitdistr(dat, "Poisson")
+f1$estimate
+f1_aicc <- -2 * (f1$loglik + 1)
+f1_aicc
+```
+
+And now we'll fit a negative binomial.
+
+```{r fit_nb}
+## fit negative binomial
+f2 <- fitdistr(dat, "negative binomial")
+f2$estimate
+f2_aicc <- -2 * (f2$loglik + 2)
+f2_aicc
 ```
 
